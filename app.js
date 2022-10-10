@@ -1,28 +1,11 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
-const port = 3000
-const fs = require('fs');
+const port = process.env.PORT
 app.use(express.json())
+const routes = require( "./src/routes" );
 
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
-
-app.get('/get', (req, res) => {
-    fs.readFile('DB.json', (err, data) => {
-        if (err) throw err;
-        let DB = JSON.parse(data);
-        res.send({data: DB})
-    });
-})
-
-app.post('/save', (req, res) => {
-    const data = JSON.stringify(req.body);
-    fs.writeFileSync('DB.json', data);
-    res.send({data: req.body})
-})
+routes(app)
 
 app.listen(port, () => {
     console.log(`app listening on port ${port}`)
